@@ -1,5 +1,9 @@
 ﻿# 延迟加载程序集
 
+:::info 与 AOT 无关
+延迟加载只影响程序集是否写入 **`global-metadata.dat`**（元数据体积）。与 **`aot.xml` / PGO / LeanAOT 是否生成原生代码** 是独立机制。请先阅读 [概念辨析](./concepts)。
+:::
+
 ## 机制说明
 
 在 **LeanCLR Settings → Lean AOT → lazyLoadAssemblyNames** 中列出的程序集：

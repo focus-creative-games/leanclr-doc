@@ -69,6 +69,7 @@ const sidebars: SidebarsConfig = {
           items: [
             'ecosystem/unity/requirements',
             'ecosystem/unity/install',
+            'ecosystem/unity/concepts',
             'ecosystem/unity/settings',
             'ecosystem/unity/build',
             'ecosystem/unity/lazy-load',

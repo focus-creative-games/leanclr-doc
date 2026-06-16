@@ -1,5 +1,9 @@
 ﻿# Unity 中的 PGO
 
+:::info 只影响 AOT 代码体积
+PGO 根据运行时 profile 决定**哪些方法追加 AOT**，与 **延迟加载 / `global-metadata.dat`** 无关。概念总览见 [概念辨析](./concepts)。
+:::
+
 **Profile Guided AOT（PGO）** 根据运行时采集的调用统计，将热点方法写入 **`pgo-aot.xml`**，在后续构建中**追加** AOT 编译（与 `aot.xml` 的包含 / 排除策略配合）。
 
 完整技术说明见 [Profile Guided AOT](../../aot/pgo)。本页仅描述 Unity 侧操作步骤。
