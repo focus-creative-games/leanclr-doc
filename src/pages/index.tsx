@@ -27,8 +27,8 @@ const FeatureList = [
 const EcosystemList = [
   {name: 'Unity / 团结引擎', status: '✅ 已完成', link: '/docs/ecosystem/unity/'},
   {name: 'Godot', status: '🚧 开发中', link: '/docs/ecosystem/godot/'},
-  {name: 'Unreal Engine', status: '📋 规划中', link: '/docs/ecosystem/unreal/'},
-  {name: 'Cocos Engine', status: '📋 规划中', link: '/docs/ecosystem/cocos/'},
+  {name: 'Unreal Engine', status: '🚧 开发中', link: '/docs/ecosystem/unreal/'},
+  {name: 'Cocos Engine', status: '🚧 开发中', link: '/docs/ecosystem/cocos/'},
 ];
 
 function Feature({title, description}: {title: string; description: string}) {

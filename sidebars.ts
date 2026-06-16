@@ -46,7 +46,6 @@ const sidebars: SidebarsConfig = {
         'aot/leanaot-tool',
         'aot/workflow',
         'aot/rule-file',
-        'aot/rule-file-internals',
         'aot/pgo',
         'aot/community-vs-commercial',
         'aot/cli-reference',
