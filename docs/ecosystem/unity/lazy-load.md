@@ -38,7 +38,7 @@ LargeFeature
 :::danger 不允许改动
 延迟加载的程序集在运行时加载的 DLL，必须与构建时 LeanAOT 使用的**裁剪后程序集字节完全一致**，**不允许**在构建后修改 IL、重新编译或替换为其他版本。
 
-不能直接使用 `CompileDll` 产出、开发期 `Library/ScriptAssemblies` 或未参与本次 Player 构建的 DLL。若程序集中有方法已被 AOT，DLL 与包内原生代码、元数据必须一一对应，任何字节差异都可能导致严重运行时错误。
+不能直接使用 **`Library/LeanCLR/CompileDlls/`**（[CompileDllActiveTarget](./build#compile-dll) 产出）、开发期 `Library/ScriptAssemblies` 或未参与本次 Player 构建的 DLL。若程序集中有方法已被 AOT，DLL 与包内原生代码、元数据必须一一对应，任何字节差异都可能导致严重运行时错误。
 :::
 
 leanclr-unity 在构建时将裁剪后的 DLL 复制到：

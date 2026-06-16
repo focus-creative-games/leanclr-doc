@@ -40,7 +40,7 @@ Unity 发布到 **WebGL** 与**小游戏**平台时，常见痛点包括：
 | 安装包 | [安装](./install) |
 | **分清 LeanAOT / AOT / PGO / 延迟加载 / 热更新** | [**概念辨析**](./concepts) |
 | 配置构建与热更 | [项目设置](./settings) |
-| 发布构建 | [构建](./build) |
+| 发布构建 | [构建](./build)（含 **CompileDllActiveTarget**） |
 | 同版本按需加载 | [延迟加载](./lazy-load) |
 | 逻辑热更新 | [代码热更新](./hot-update) |
 | 优化 AOT 包体 | [PGO](./pgo)、[AOT 规则文件](../../aot/rule-file) |

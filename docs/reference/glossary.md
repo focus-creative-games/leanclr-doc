@@ -29,7 +29,9 @@
 | 术语 | 说明 |
 |------|------|
 | **leanclr-unity** | Unity 包 `com.code-philosophy.leanclr` |
-| **ManagedStripped** | Unity 裁剪后的托管程序集目录 |
+| **ManagedStripped** | Player 构建后 LeanAOT 复制的裁剪托管 DLL 目录：`Library/LeanCLR/ManagedStripped/{target}/` |
+| **CompileDlls** | 菜单 **CompileDllActiveTarget** 输出目录：`Library/LeanCLR/CompileDlls/{target}/` |
+| **CompileDllActiveTarget** | LeanCLR 菜单项，调用 `PlayerBuildInterface.CompilePlayerScripts` 编译当前 Active Target 的托管 DLL |
 | **il2cpp-wrapper** | 将 `convert-to-cpp` 转发给 LeanAOT 的工具 |
 | **Lazy Load** | 构建时不写入 metadata、运行时 `Assembly.Load` 的程序集 |
 | **LEANAOT_EXTRA_ARGS** | 向 LeanAOT 追加命令行 token 的环境变量 |

@@ -47,12 +47,34 @@ HotUpdateLogic
 - **不会**产生包内 AOT 原生代码，热更后不存在 IL 与 AOT 不匹配问题；
 - 与 `lazyLoadedAssemblyNames` **互斥**：同一程序集不能出现在两个列表中，否则构建报错。
 
+## 编译热更新 DLL
+
+热更程序集不参与 Player 构建，需单独编译 DLL 再下发。在 Unity 菜单选择：
+
+**LeanCLR → CompileDllActiveTarget**
+
+该命令对当前 **Active Build Target** 调用 `PlayerBuildInterface.CompilePlayerScripts`，将编译结果输出到：
+
+```text
+Library/LeanCLR/CompileDlls/{buildTarget}/
+```
+
+- **Development** 开关跟随 **Editor → Development Build**（`EditorUserBuildSettings.development`）
+- 输出包含 `hotUpdateAssemblyNames` 中的程序集（以及工程内其它玩家脚本程序集）
+- 从该目录取出热更程序集 DLL，按你们的 CDN / 分包流程分发；运行时 `Assembly.Load` 加载
+
+完整说明与和 `ManagedStripped` 的区别见 [Unity 构建 — 编译托管 DLL](./build#compile-dll)。
+
+:::tip 切换平台
+发布 WebGL 热更包前，请将 **Build Settings** 中的 Active Target 切到 WebGL，再执行 **CompileDllActiveTarget**，确保编译选项与目标平台一致。
+:::
+
 ## 推荐配置清单
 
 - [ ] 热更程序集仅列在 **`hotUpdateAssemblyNames`**，未列入 `lazyLoadedAssemblyNames`
 - [ ] 主包代码在热更 DLL 加载前**不直接引用**热更程序集类型（避免链接期强依赖）
 - [ ] 已实现下载、`Assembly.Load`、失败重试与版本校验
-- [ ] 热更 DLL 与主包 **Unity 版本、裁剪基线**兼容（按发布管线编译）
+- [ ] 热更 DLL 使用 **CompileDllActiveTarget** 编译（`Library/LeanCLR/CompileDlls/{target}/`），且与主包 **Unity 版本、目标平台**一致
 - [ ] WebGL / 小游戏已评估异步加载与内存（当前 LeanCLR **单线程**）
 
 ## 编码约束
@@ -70,7 +92,7 @@ var entry = asm.GetType("HotUpdate.Entry");
 entry.GetMethod("Start")?.Invoke(null, null);
 ```
 
-热更 DLL 可放在小游戏分包、CDN 或 HTTP 下载；加载成功后 placeholder 程序集槽位会被实际模块替换。
+热更 DLL 可放在小游戏分包、CDN 或 HTTP 下载；通常来自 [CompileDllActiveTarget](./build#compile-dll) 产出目录，而非 `ManagedStripped`。加载成功后 placeholder 程序集槽位会被实际模块替换。
 
 ## 脚本与 AssetBundle
 

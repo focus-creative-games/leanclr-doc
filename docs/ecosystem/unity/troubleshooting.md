@@ -34,7 +34,7 @@
 
 **常见原因：** 运行时加载的 DLL 与 `Library/LeanCLR/ManagedStripped/{buildTarget}/` 中构建期 DLL **不一致**。
 
-**处理：** 仅使用构建产物目录中的裁剪 DLL，勿用 `CompileDll` 输出。
+**处理：** 仅使用 `Library/LeanCLR/ManagedStripped/{buildTarget}/` 中与本次 Player 构建一致的裁剪 DLL。**不要**使用 `Library/LeanCLR/CompileDlls/`（该目录供 [热更新](./hot-update) 编译 DLL，与 lazy load 无关）。
 
 ### 多线程相关崩溃
 
