@@ -1,0 +1,7 @@
+﻿# 环境变量
+
+## LEANCLR_OUT_ROOT
+
+## LEANAOT_EXTRA_ARGS
+
+## UNITY_IL2CPP_PATH

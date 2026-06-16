@@ -1,0 +1,29 @@
+.heroBanner {
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.features {
+  display: flex;
+  align-items: stretch;
+  padding: 2rem 0;
+  width: 100%;
+}
+
+.featureCard {
+  padding: 1.5rem;
+}
+
+.ecosystemTable {
+  margin: 0 auto;
+  max-width: 800px;
+  width: 100%;
+}
