@@ -1,7 +1,44 @@
 ﻿# 术语表
 
-## 运行时术语
+## 运行时
 
-## AOT 术语
+| 术语 | 说明 |
+|------|------|
+| **CLR** | Common Language Runtime，Common 语言运行时 |
+| **ECMA-335** | C# / .NET 中间语言与元数据标准 |
+| **Standard 版** | 当前对外发布的 LeanCLR 版本（现时为单线程） |
+| **Core 版** | 规划中从 Standard 裁剪的纯 C++11、极致体积版本 |
+| **解释器** | 对未 AOT 的 IL 进行 IR 解释执行 |
+| **icall** | internal call，BCL 中由原生实现的内部调用 |
+| **AOT 模块** | LeanAOT 生成的 C++ 及 `g_aot_modules_data` 注册块 |
 
-## Unity 集成术语
+## AOT
+
+| 术语 | 说明 |
+|------|------|
+| **LeanAOT** | IL → C++ 的 AOT 编译器 |
+| **aot.xml** | 手工 AOT 包含/排除规则文件 |
+| **pgo-aot.xml** | PGO 生成的热点方法追加规则（文件名统一使用此名） |
+| **pgo2aot** | Profile JSON → `pgo-aot.xml` 的工具 |
+| **MethodMap.tsv** | 托管方法名与生成 C++ 符号的映射表（Unity 构建产物） |
+| **global-metadata.dat** | 打包裁剪程序集元数据的 bundle（Unity 构建产物） |
+| **COPH** | `global-metadata.dat` 使用的 bundle 签名标识 |
+
+## Unity 集成
+
+| 术语 | 说明 |
+|------|------|
+| **leanclr-unity** | Unity 包 `com.code-philosophy.leanclr` |
+| **ManagedStripped** | Unity 裁剪后的托管程序集目录 |
+| **il2cpp-wrapper** | 将 `convert-to-cpp` 转发给 LeanAOT 的工具 |
+| **Lazy Load** | 构建时不写入 metadata、运行时 `Assembly.Load` 的程序集 |
+| **LEANAOT_EXTRA_ARGS** | 向 LeanAOT 追加命令行 token 的环境变量 |
+
+## 与 link.xml 区分
+
+| 文件 | 用途 |
+|------|------|
+| **link.xml** | Unity 托管代码裁剪 |
+| **aot.xml** | LeanAOT 方法级 AOT 开关 |
+
+二者互不替代。

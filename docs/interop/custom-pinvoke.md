@@ -2,10 +2,9 @@
 
 LeanCLR 支持自定义 **P/Invoke**，在托管 C# 与原生 C++ 之间互操作。为保持跨平台可移植性，P/Invoke 目标目前须为 **AOT 编译的原生函数**；在 IL→AOT 工具链完全自动化之前，**需手动注册**原生实现。
 
-示例工程：
+**各平台（Win64、WebAssembly、Unity 发布目标等）使用同一套注册 API**，无平台分支写法。参考示例：
 
-- `src/samples/custom-pinvoke-x64` — Windows x64
-- `src/samples/custom-pinvoke-wasm` — WebAssembly
+- `src/samples/custom-pinvoke-x64`
 
 ## 概述
 
@@ -127,11 +126,11 @@ int main()
 - 在 `initialize` **之后**注册
 - 签名字符串与 C# 元数据严格一致
 - 使用 `RuntimeApi` 辅助函数访问栈，避免手工算偏移
-- WASM 平台注意 `__Internal` 与 JS 胶水，见 [P/Invoke 示例](./pinvoke-samples)
+- 换平台时复用同一套 C# 声明与 `register_pinvoke_func` 逻辑，仅原生函数实现与链接方式随宿主工具链变化
 
 ## LeanAOT 自动生成（展望）
 
-LeanAOT  toolchain 发展后，部分 P/Invoke 包装可由 AOT 自动生成。当前以手动注册为准。
+LeanAOT toolchain 发展后，部分 P/Invoke 包装可由 AOT 自动生成。当前以手动注册为准。
 
 ## 相关文档
 

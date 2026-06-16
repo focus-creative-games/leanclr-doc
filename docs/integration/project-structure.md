@@ -63,7 +63,7 @@ leanclr/
 |------|------|
 | **startup** | Win64 最小嵌入 |
 | **lean-wasm** | 浏览器 WASM |
-| **custom-pinvoke-x64 / wasm** | 自定义 P/Invoke |
+| **custom-pinvoke-x64** | 自定义 P/Invoke 示例 |
 | **simple-aot** | AOT 生成 C++ 并链接 |
 
 ## tests
