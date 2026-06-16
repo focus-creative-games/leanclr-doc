@@ -46,7 +46,7 @@
 
 1. 编写 `aot.xml`，对大程序集设 `aot="0"` 默认排除
 2. 使用 [PGO](./pgo) 仅对热点方法生成 `pgo-aot.xml` 追加 AOT
-3. 评估 `lazyLoadAssemblyNames` 延迟加载非首包程序集
+3. 评估 `lazyLoadedAssemblyNames` 延迟加载非首包程序集
 
 ### 性能不如预期
 

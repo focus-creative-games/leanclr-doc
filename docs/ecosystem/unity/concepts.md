@@ -2,31 +2,35 @@
 
 Unity 集成里与「AOT」「包体」相关的选项较多，名称也相似，容易混用。**请先读完本页**，再配置 [项目设置](./settings)。
 
-:::warning 最容易搞混的一点
-**延迟加载（lazy loaded assembly）与 AOT 是完全独立、互不相干的两种机制。**
+:::warning 最容易搞混的几点
+**延迟加载**、**热更新** 与 **AOT** 是不同维度的机制，请勿混为一谈。
 
-| 机制 | 主要影响 | 减小的是什么 |
-|------|----------|--------------|
-| **AOT 相关**（LeanAOT、`aot.xml`、`pgo-aot.xml`） | 哪些托管代码被翻译成 C++ 并编译进原生产物 | **AOT 原生代码**体积 |
-| **延迟加载**（`lazyLoadAssemblyNames`） | 哪些程序集写入 `global-metadata.dat` | **`global-metadata.dat`（元数据）**体积 |
+| 机制 | 主要影响 | 减小 / 控制什么 |
+|------|----------|-----------------|
+| **AOT**（LeanAOT、`aot.xml`、`pgo-aot.xml`） | 哪些 IL 被译为 C++ 并进包 | **AOT 原生代码**体积 |
+| **延迟加载**（`lazyLoadedAssemblyNames`） | 哪些程序集写入 `global-metadata.dat`；**仍参与构建与 LeanAOT** | **metadata** 体积；运行时加载**固定版本**裁剪 DLL |
+| **热更新**（`hotUpdateAssemblyNames`） | 构建前从管线**过滤**，不参与 LeanAOT | **metadata** 不占位内嵌 DLL；运行时加载**可变更** DLL |
 
-二者可以**同时**使用，也可以**只配其一**；配置一项**不会**自动影响另一项。
+**延迟加载 ≠ 热更新**：lazy 的程序集**可以**被 AOT；hot update 程序集**不可能**有 AOT。二者**不能**配置同一程序集。对比见 [延迟加载与热更新](#lazy-vs-hot-update)。
 :::
 
 ## 一图分清两条优化线
 
 ```mermaid
 flowchart TB
-    subgraph meta["元数据线（与 AOT 无关）"]
-        DLL1[托管 DLL] --> GMD[global-metadata.dat]
-        LL[lazyLoadAssemblyNames] -.->|排除| GMD
-        LL -->|运行时 Assembly.Load| DLL1
+    subgraph meta["不进 global-metadata.dat"]
+        LL[lazyLoadedAssemblyNames]
+        HU[hotUpdateAssemblyNames]
+        LL --> GMD1[仍参与构建 + LeanAOT]
+        HU --> GMD2[构建前过滤，不参与 LeanAOT]
+        GMD1 --> Load1[Assembly.Load 固定裁剪 DLL]
+        GMD2 --> Load2[Assembly.Load 热更 DLL]
     end
 
-    subgraph aotline["AOT 线（与 global-metadata 无关）"]
+    subgraph aotline["AOT 线（仅参与构建的程序集）"]
         DLL2[托管 DLL] --> LeanAOT[LeanAOT]
-        ARF[aot.xml 手工规则] --> LeanAOT
-        PGO[pgo-aot.xml PGO 规则] --> LeanAOT
+        ARF[aot.xml] --> LeanAOT
+        PGO[pgo-aot.xml] --> LeanAOT
         LeanAOT --> CPP[C++ / wasm 原生代码]
     end
 ```
@@ -40,7 +44,8 @@ flowchart TB
 | **LeanAOT** | 将 IL 译为 C++ 并编译为原生代码，使 C# 热点达到接近 native 的性能 | 构建时自动调用（无需单独开关） | [AOT 概述](../../aot/overview) |
 | **AOT 规则文件**（`aot.xml`） | 全量 AOT 时**原生代码过大**；只对部分托管代码做 AOT，减小 AOT 体积 | Settings → `ruleFiles` | [AOT 规则文件](../../aot/rule-file) |
 | **PGO**（`pgo-aot.xml`） | 在 `aot.xml` 粗粒度策略基础上，用运行时 profile **自动**挑出热点方法做 AOT | Settings → `enablePgoProfile`、`pgoRuleFiles` | [Unity 中的 PGO](./pgo) |
-| **延迟加载程序集** | 所有 DLL 默认进 `global-metadata.dat` 导致**元数据过大**；启动用不到的程序集可不进 metadata | Settings → `lazyLoadAssemblyNames` | [延迟加载](./lazy-load) |
+| **延迟加载程序集** | `global-metadata.dat` 过大；同版本按需加载 | `lazyLoadedAssemblyNames` | [延迟加载](./lazy-load) |
+| **热更新程序集** | 逻辑热更；构建前排除、无 AOT | `hotUpdateAssemblyNames` | [代码热更新](./hot-update) |
 
 ## LeanAOT
 
@@ -75,24 +80,49 @@ flowchart TB
 
 ## 延迟加载程序集（lazy loaded assembly） {#lazy-load}
 
-**目标**：解决 **`global-metadata.dat` 过大**的问题。构建时，所有托管 DLL 默认都会写入 `global-metadata.dat`，导致元数据体积膨胀；对**启动阶段用不到**的程序集，可配置为延迟加载，使其**不进入** `global-metadata.dat`，从而减小首包中的**元数据**体积。
+**目标**：减小 **`global-metadata.dat`**，并对启动阶段不需要的模块做**同版本**按需加载。
 
-- **配置**：LeanCLR Settings → Lean AOT → **`lazyLoadAssemblyNames`**（程序集短名，无 `.dll`）。
-- **运行时**：在使用到该程序集的代码之前，开发者须自行 **`Assembly.Load`**（或等价方式）加载对应 DLL。
-- **DLL 从哪来**：裁剪后的程序集字节须与构建期一致，通常从 `Library/LeanCLR/ManagedStripped/{buildTarget}/` 获取；也可放到小游戏**分包**、通过 **HTTP 下载**等，由业务自行分发。
-- **与 AOT 的关系**：延迟加载程序集**仍会参与 LeanAOT 编译**（除非你在 `aot.xml` 里对该程序集另有排除）。「不进 metadata」≠「不 AOT」；二者独立配置。详见 [延迟加载](./lazy-load)。
+- **配置**：Lean AOT → **`lazyLoadedAssemblyNames`**
+- **构建**：程序集**仍进入** Unity / LeanAOT 管线；可按 `aot.xml` 生成 AOT 代码
+- **运行时**：`Assembly.Load` 加载的字节必须与 `Library/LeanCLR/ManagedStripped/{buildTarget}/` 中**本次构建的裁剪 DLL 完全一致**，**不允许改动**
+- **与 AOT**：lazy load 只影响 metadata；**不**自动禁用 AOT
+
+## 热更新程序集（hot update assembly） {#hot-update}
+
+**目标**：程序集**不参与** Player 构建，运行时加载**新版本** DLL 做逻辑热更。
+
+- **配置**：**Hot Update** → **`hotUpdateAssemblyNames`**（`HotUpdateSettings`）
+- **构建**：`FilterHotUpdateAssembly` 在构建前过滤，**完全不参与** LeanAOT，故**不可能**有 AOT
+- **运行时**：自行下载 / 分包 + `Assembly.Load`；DLL 可与首包版本不同（须兼容同一 Unity / 裁剪基线）
+
+## 延迟加载与热更新 {#lazy-vs-hot-update}
+
+| | 延迟加载 | 热更新 |
+|--|----------|--------|
+| 参与构建 | ✅ 是 | ❌ 构建前过滤 |
+| 可有 AOT | ✅ 可以 | ❌ 不可能 |
+| 运行时 DLL | 与构建裁剪结果**字节一致** | 可为**新版本** |
+| 不进 `global-metadata.dat` | ✅ | ✅ |
+| `Assembly.Load` | ✅ | ✅ |
+| AssetBundle 脚本还原 | ✅ | ✅ |
+| 同一程序集互斥配置 | — | 不可同时出现在两个列表 |
+
+详见 [延迟加载](./lazy-load)、[代码热更新](./hot-update)。
 
 ## 常见误解
 
 | 误解 | 实际情况 |
 |------|----------|
-| 配置了 lazy load，程序集就不会生成 AOT 代码 | ❌ 默认仍会 AOT；lazy load 只影响是否写入 `global-metadata.dat` |
-| `aot.xml` 里 `aot="0"` 能减小 metadata | ❌ `aot.xml` 只控制 AOT 范围，不控制 metadata 里有哪些程序集 |
-| PGO 可以替代 lazy load | ❌ PGO 只优化 **哪些方法 AOT**；metadata 体积要靠 lazy load（或其它加载策略） |
-| 把 DLL 放到 CDN 就等于 lazy load | ❌ 还须先在 Settings 里声明 `lazyLoadAssemblyNames`，且运行时主动 `Assembly.Load` |
+| 热更新程序集应配在 `lazyLoadedAssemblyNames` | ❌ 应使用 **`hotUpdateAssemblyNames`**；二者互斥 |
+| 配置了 lazy load，程序集就不会 AOT | ❌ lazy load 只影响 metadata；默认仍可 AOT |
+| 延迟加载可以加载热更后的新 DLL | ❌ lazy load 必须加载**构建期固定**裁剪 DLL |
+| 热更程序集要在 `aot.xml` 里 `aot="0"` | ❌ 热更程序集未参与构建，**无需**也**无法**对其 AOT |
+| `aot.xml` 里 `aot="0"` 能减小 metadata | ❌ metadata 靠 lazy load / hot update 列表控制 |
+| PGO 可以替代 lazy load | ❌ PGO 只影响 AOT 方法选择 |
+| 把 DLL 放到 CDN 就等于 lazy load 或热更 | ❌ 须在 Settings 中声明对应列表，并 `Assembly.Load` |
 
 ## 推荐阅读顺序
 
 1. 本页（概念辨析）
 2. [项目设置](./settings) — 各开关含义
-3. 按需：[AOT 规则文件](../../aot/rule-file)、[Unity 中的 PGO](./pgo)、[延迟加载](./lazy-load)
+3. 按需：[AOT 规则文件](../../aot/rule-file)、[Unity 中的 PGO](./pgo)、[延迟加载](./lazy-load)、[代码热更新](./hot-update)

@@ -22,8 +22,10 @@ Library/LeanCLR/ManagedStripped/{buildTarget}/
 
 该目录下的 DLL 用于：
 
-- **延迟加载**（`lazyLoadAssemblyNames` 配置的程序集）
+- **延迟加载**（`lazyLoadedAssemblyNames` 配置的程序集）— 运行时须加载与其中文件**字节一致**的 DLL
 - 排查构建期与运行期程序集不一致问题
+
+**热更新**程序集（`hotUpdateAssemblyNames`）在构建前即被过滤，**不会**出现在此目录，也不会参与 LeanAOT。见 [代码热更新](./hot-update)。
 
 ### 与标准 IL2CPP 构建的差异（概念）
 

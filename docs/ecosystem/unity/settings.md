@@ -1,7 +1,7 @@
 ﻿# LeanCLR 项目设置
 
 :::tip 配置前请先阅读
-[LeanAOT 与包体优化概念](./concepts) 说明了 **LeanAOT、`aot.xml`、PGO、延迟加载** 的区别。其中 **延迟加载与 AOT 完全独立**，分别减小 `global-metadata.dat` 与 AOT 原生代码体积，请勿混为一谈。
+[LeanAOT 与包体优化概念](./concepts) 说明了 **LeanAOT、`aot.xml`、PGO、延迟加载、热更新** 的区别。**延迟加载与热更新是不同机制**，且与 AOT 配置相互独立。
 :::
 
 通过 **LeanCLR → Settings...** 或 **Edit → Project Settings → LeanCLR** 打开。配置保存在 `ProjectSettings/LeanCLR.asset`，离开设置页时自动保存。
@@ -35,10 +35,12 @@
 
 规则文件语法见 [AOT 规则文件](../../aot/rule-file)。与 Unity `link.xml` **无关**。
 
-### lazyLoadAssemblyNames
+### lazyLoadedAssemblyNames
 
-列表中的程序集在构建时**不会**写入 `global-metadata.dat`（减小**元数据**体积），运行时需自行 `Assembly.Load` 等方式加载。与 AOT 是否生成**无关**；这些程序集**仍会参与 AOT 编译**。概念说明见 [概念辨析 — 延迟加载](./concepts#lazy-load)。
-- 加载时必须使用构建产物中的裁剪后 DLL，见 [延迟加载](./lazy-load)
+**延迟加载**程序集短名列表。构建时**不写入** `global-metadata.dat`，但**仍参与** LeanAOT；运行时 `Assembly.Load` 的 DLL 必须与 `Library/LeanCLR/ManagedStripped/{buildTarget}/` 中**本次构建裁剪结果字节完全一致**，**不允许改动**。概念说明见 [概念辨析 — 延迟加载](./concepts#lazy-load)。
+
+- 加载说明见 [延迟加载](./lazy-load)
+- **不可**与 `hotUpdateAssemblyNames` 重复
 
 ### enablePgoProfile
 
@@ -54,6 +56,17 @@
 **PGO 规则文件**路径列表。输出文件名建议为 **`pgo-aot.xml`**，格式与 `aot.xml` **不同**。由 profile JSON 经 pgo2aot 生成，供 LeanAOT **追加** AOT 热点。概念说明见 [概念辨析 — PGO](./concepts#pgo)。
 
 打包时传给 LeanAOT 的 `--leanaot-pgo-rule-file`。技术说明见 [Profile Guided AOT](../../aot/pgo)。
+
+## 热更新设置
+
+展开 **Hot Update**（`hotUpdateSettings`，类 **`HotUpdateSettings`**）配置热更新程序集。
+
+### hotUpdateAssemblyNames
+
+**热更新**程序集短名列表（无 `.dll` 后缀）。构建前由 `FilterHotUpdateAssembly` **从构建管线过滤**，**完全不参与** LeanAOT，运行时通过 `Assembly.Load` 加载**可变更**的 DLL。
+
+- 与 `lazyLoadedAssemblyNames` **互斥**，不可配置同一程序集
+- 详见 [代码热更新](./hot-update)
 
 ## 环境变量（高级）
 

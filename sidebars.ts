@@ -73,6 +73,7 @@ const sidebars: SidebarsConfig = {
             'ecosystem/unity/settings',
             'ecosystem/unity/build',
             'ecosystem/unity/lazy-load',
+            'ecosystem/unity/hot-update',
             'ecosystem/unity/pgo',
             'ecosystem/unity/win64-notes',
             'ecosystem/unity/troubleshooting',
