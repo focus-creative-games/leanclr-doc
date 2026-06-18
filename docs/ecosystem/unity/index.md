@@ -14,7 +14,7 @@
 
 ## 为什么使用 LeanCLR for Unity
 
-Unity 发布到 **WebGL** 与**小游戏**平台时，IL2CPP 常带来 wasm 过大、虚拟机与托管内存偏高等问题。使用 LeanCLR 替换 IL2CPP backend 后，在保持与 Unity 裁剪后 BCL 高兼容的同时，典型收益如下（相对 IL2CPP 全量 AOT 方案，配合 `aot.xml` / PGO 等**选择性 AOT**策略）：
+Unity 发布到 **WebGL** 与**小游戏**、**鸿蒙**等平台时，IL2CPP 常带来 wasm 过大、虚拟机与托管内存偏高等问题。使用 LeanCLR 替换 IL2CPP backend 后，在保持与 Unity 裁剪后 BCL 高兼容的同时，典型收益如下（相对 IL2CPP 全量 AOT，配合 `aot.xml` / PGO **选择性 AOT**；基于 Standard **unity** 分支）：
 
 | 维度 | 相对 IL2CPP 的优势 |
 |------|-------------------|

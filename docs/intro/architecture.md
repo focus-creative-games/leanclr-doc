@@ -38,7 +38,7 @@ flowchart LR
 | **icalls** | 内部调用（internal call）实现 |
 | **alloc** | 元数据与托管对象分配 |
 | **intrinsics** | 内建方法优化 |
-| **os** | 操作系统抽象（Standard 版；Core 版将裁剪） |
+| **os** | 操作系统抽象（Standard 版；Core 版无平台相关代码） |
 
 ## 工具链概览
 

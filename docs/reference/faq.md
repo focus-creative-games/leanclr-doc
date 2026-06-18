@@ -15,7 +15,7 @@
 
 ### 当前版本支持多线程吗？
 
-对外 **Standard 版现为单线程**。多线程将在后续 Standard 演进中提供。请勿在发布产物中依赖多线程调用 CLR API。
+对外 **Standard 版**（mono / unity / coreclr 分支）与 **Core 版**当前均为**单线程**。多线程将在后续 Standard 演进中提供。**Core 版**须手动管理 GC，见 [Core 与 Standard](../intro/editions)。
 
 ## 构建与集成
 

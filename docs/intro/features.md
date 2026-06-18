@@ -2,9 +2,12 @@
 
 ## 跨平台能力
 
-LeanCLR 使用 **AOT + 解释器** 混合架构，不支持 JIT。运行时以 C++ 实现，当前 Standard 版在 Unity WebGL、小游戏等目标上运行稳定。
+LeanCLR 使用 **AOT + 解释器** 混合架构，不支持 JIT。运行时以 C++ 实现。
 
-未来将在此基础上完善全平台支持与多线程能力；并计划从 Standard 裁剪出仅依赖纯 C++11、无任何平台相关代码的 **Core** 版，以获得最佳移植性。
+- **Standard 版**：含 **mono / unity / coreclr** 三个 BCL 分支；**mono、unity** 在 WebGL、小游戏上较稳定；**鸿蒙**已支持；当前均单线程。
+- **Core 版**：**已实现**，纯 C++11、全平台、准确式 Mark-Sweep **手动 GC**，适合极致裁剪嵌入。
+
+未来将完善 Standard 多线程与 **coreclr** 分支、补全平台 icall。
 
 ## 易于集成
 

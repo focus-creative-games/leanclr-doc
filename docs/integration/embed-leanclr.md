@@ -159,9 +159,21 @@ WASM 宿主需额外导出 C 函数供 JavaScript 调用，并配置 Emscripten 
 
 多数 API 返回 `RtResult<T>`，调用 `is_err()` 后再 `unwrap()`。
 
-### 线程（Standard 当前版本）
+### 线程（Standard / Core 当前版本）
 
-当前 Standard 版为**单线程**。不要在多线程中并发调用 LeanCLR API。
+Standard 三 BCL 分支与 Core 版**当前均仅支持单线程**。不要在多线程中并发调用 LeanCLR API。
+
+### Core 版 GC 手动管理 {#core-版-gc-手动管理}
+
+使用 **Core 版**嵌入时，GC 为准确式 Mark-Sweep，但**不由运行时自动触发**：
+
+1. **进入托管代码前**：禁用 GC（例如 `vm::GC::disable()`，或 il2cpp 兼容层 `il2cpp_gc_disable()`）
+2. **执行**托管方法 / 解释器 / AOT 代码
+3. **返回原生代码后**：恢复 GC 并按策略**主动**调用全量回收（例如 `vm::GC::collect()`）
+
+在 GC 禁用期间分配的托管对象会累积，须在合适边界（帧末、关卡切换、原生主循环迭代等）主动 `collect`，否则堆会持续增长。Standard 版由运行时自动管理 GC，**无需**上述手动流程。
+
+详见 [Core 与 Standard](../intro/editions#core-版本)。
 
 ## 故障排除
 

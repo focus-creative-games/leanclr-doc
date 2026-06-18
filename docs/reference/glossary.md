@@ -6,8 +6,11 @@
 |------|------|
 | **CLR** | Common Language Runtime，Common 语言运行时 |
 | **ECMA-335** | C# / .NET 中间语言与元数据标准 |
-| **Standard 版** | 当前对外发布的 LeanCLR 版本（现时为单线程） |
-| **Core 版** | 规划中从 Standard 裁剪的纯 C++11、极致体积版本 |
+| **Standard 版** | 面向引擎集成；含 **mono / unity / coreclr** BCL 分支（当前均单线程） |
+| **Core 版** | 已实现；纯 C++11、全平台；准确式 Mark-Sweep **手动 GC** |
+| **unity 分支** | Standard 分支，Unity IL2CPP BCL；leanclr-unity 默认 |
+| **mono 分支** | Standard 分支，Mono BCL 基线 |
+| **coreclr 分支** | Standard 分支，CoreCLR 方向；开发中 |
 | **解释器** | 对未 AOT 的 IL 进行 IR 解释执行 |
 | **icall** | internal call，BCL 中由原生实现的内部调用 |
 | **AOT 模块** | LeanAOT 生成的 C++ 及 `g_aot_modules_data` 注册块 |

@@ -14,8 +14,9 @@
 
 | 平台 | 支持级别 |
 |------|----------|
-| **WebGL** | ✅ 主要目标平台 |
+| **WebGL** | ✅ 主要目标平台（Standard **unity** 分支） |
 | **MiniGame / 小游戏** | ✅ 微信小游戏、抖音小游戏等 Unity 支持的小游戏平台 |
+| **鸿蒙（HarmonyOS）** | ✅ Standard 版已支持 |
 | **Win64** | ⚠️ 部分支持（见 [Win64 注意事项](./win64-notes)） |
 
 团结引擎的 WebGL / 小游戏目标与 Unity 同等对待。
@@ -24,9 +25,7 @@
 
 ### 单线程
 
-当前 LeanCLR Standard 版为**单线程**。请勿在发布产物中依赖 `System.Threading` 多线程并发调用 LeanCLR 托管代码。多线程环境下可能产生未定义行为。
-
-未来将随 Standard 版演进提供完整多线程支持。
+当前 LeanCLR **Standard（unity 分支）** 与 **Core** 版均为**单线程**。请勿在发布产物中依赖 `System.Threading` 多线程并发调用 LeanCLR 托管代码。
 
 ### 非开发期运行时
 

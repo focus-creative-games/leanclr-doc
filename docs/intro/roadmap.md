@@ -12,31 +12,40 @@
 | 委托 | 单播 / 多播、泛型委托 |
 | 内部调用 | icall 实现 |
 | P/Invoke | 手动注册 + LeanAOT 自动生成 |
-| 垃圾回收 | 准确式 mark-sweep 全量 GC |
+| 垃圾回收 | 准确式 Mark-Sweep（Standard 自动 / Core 手动） |
 | AOT 编译器 | IL → C++（LeanAOT） |
+| **Core 版** | 纯 C++11、全平台、手动 GC |
 
-## 开发中
+## 引擎与平台集成
 
-### 引擎集成
-
-| 引擎 | 状态 | 仓库 |
-|------|------|------|
-| **Unity / 团结引擎** | ✅ 已完成 | [leanclr-unity](https://github.com/focus-creative-games/leanclr-unity) |
-| **Godot** | 🚧 开发中，预计 2026-10 预览 | [leanclr-godot](https://github.com/focus-creative-games/leanclr-godot) |
+| 引擎 / 平台 | 状态 | 说明 |
+|-------------|------|------|
+| **Unity / 团结 WebGL、小游戏** | ✅ 已完成 | [leanclr-unity](https://github.com/focus-creative-games/leanclr-unity)，Standard **unity** 分支 |
+| **鸿蒙（HarmonyOS）** | ✅ Standard 已支持 | 与所选 BCL 分支一并验证 |
+| **Godot** | 🚧 开发中 | [leanclr-godot](https://github.com/focus-creative-games/leanclr-godot) |
 | **Unreal Engine** | 🚧 开发中 | [leanclr-unreal](https://github.com/focus-creative-games/leanclr-unreal) |
 | **Cocos Engine** | 🚧 开发中 | [leanclr-cocos](https://github.com/focus-creative-games/leanclr-cocos) |
 
-### Standard 版演进
+## Standard 版演进
 
-- **完整多线程**支持（同步原语、线程 API 等）
-- **全平台** icall 与 OS 抽象完善
-- **BCL 扩展**：Mono / Unity 与 CoreCLR .NET 8+ 类库兼容
+### BCL 分支
+
+| 分支 | 状态 |
+|------|------|
+| **mono** | WASM / 小游戏较稳定；单线程 |
+| **unity** | WASM / 小游戏较稳定（Unity 集成默认）；单线程 |
+| **coreclr** | 🚧 开发中 |
+
+### 进行中
+
+- **完整多线程**（同步原语、线程 API 等）
+- **平台相关 icall** 补全（当前大量未实现）
+- **coreclr 分支** 生产可用度提升
 
 ## 规划中
 
 | 项目 | 说明 |
 |------|------|
-| **Core 版** | 从 Standard 裁剪，纯 C++11、无平台依赖、极致体积 |
 | **文档版本化** | 首个稳定 release 后，文档站将支持多版本切换 |
 | **英文文档** | 中文文档稳定后补充 `en` 语言 |
 
