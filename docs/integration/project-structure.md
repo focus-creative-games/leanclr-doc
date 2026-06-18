@@ -53,7 +53,7 @@ leanclr/
 
 | 工具 | 路径 | 说明 |
 |------|------|------|
-| **lean** | `src/tools/lean` | 内嵌 CLR 的命令行 runner |
+| **leanrun** | `src/tools/leanrun` | 内嵌 CLR 的命令行 runner |
 | **pgo2aot** | `src/tools/pgo2aot` | Profile JSON → `pgo-aot.xml` |
 | **LeanAOT** | `src/leanaot` | IL → C++ AOT 编译器 |
 

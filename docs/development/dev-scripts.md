@@ -48,7 +48,7 @@ scripts/
 - `src/runtime/build.*`
 - `src/samples/*/build.*`
 - `src/tests/basic-tester/build.*`
-- `src/tools/lean/build.*`
+- `src/tools/leanrun/build.*`
 
 ## 与 Unity 包同步
 

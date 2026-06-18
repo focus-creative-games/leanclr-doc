@@ -70,4 +70,4 @@ build-wasm.bat
 
 - `src/runtime/build.*` → `scripts/runtime/`
 - `src/tests/basic-tester/build.*` → `scripts/test/basic-tester/`
-- `src/tools/lean/build.*` → lean 工具构建
+- `src/tools/leanrun/build.*` → leanrun 工具构建

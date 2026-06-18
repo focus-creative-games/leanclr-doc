@@ -23,7 +23,7 @@ const sidebars: SidebarsConfig = {
         'getting-started/prerequisites',
         'getting-started/build-runtime',
         'getting-started/run-demo',
-        'getting-started/lean-cli',
+        'getting-started/leanrun',
         'getting-started/first-embed',
       ],
     },
